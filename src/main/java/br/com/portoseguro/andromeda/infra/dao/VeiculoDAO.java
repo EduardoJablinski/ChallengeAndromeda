@@ -19,6 +19,7 @@ public class VeiculoDAO {
 	public void adicionar(Veiculo veiculo) {
 		String sqlInsert = "INSERT INTO veiculo (cpfCnpj, numeroApolice, tipoVeiculo, modeloVeiculo, anoVeiculo, pesoVeiculo, corVeiculo, combustivelVeiculo, placaVeiculo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try {
+	        conexao.setAutoCommit(false);
 			PreparedStatement comandoDeInsercao = conexao.prepareStatement(sqlInsert);
 			comandoDeInsercao.setString(1, veiculo.getUsuario());
 			comandoDeInsercao.setInt(2, veiculo.getNumeroApolice());
@@ -78,6 +79,26 @@ public class VeiculoDAO {
 			
 		}}catch(SQLException e) {
 			throw new RuntimeException(e);
+			
+			
 		}	
 	}
+	
+	public static Long obterProximoNumeroApolice() {
+		Long id_apolice = null;
+		try {
+			String sql = "SELECT SEQ_APOLICE_NUMERO.NEXTVAL FROM DUAL";
+			PreparedStatement comandoDeGeracao =
+			conexao.prepareStatement(sql);
+			ResultSet rs = comandoDeGeracao.executeQuery();
+			while(rs.next()) {
+				id_apolice = rs.getLong(1);
+			}
+			rs.close();
+		}catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return id_apolice;
+	}
+
 }

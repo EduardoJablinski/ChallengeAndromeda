@@ -2,25 +2,24 @@ package br.com.portoseguro.andromeda.dominio;
 
 public class Usuario {
 	
-    private String senha;
     private String nome;
     private String endereco;
     private String cpfCnpj;
+    private String email;
+    private String telefone;
 
-    public Usuario(String senha, String nome, String endereco, String cpfCnpj) {
-        this.senha = senha;
+
+    public Usuario(String nome, String endereco, String cpfCnpj, String email, String telefone) {
         this.nome = nome;
         this.endereco = endereco;
         this.cpfCnpj = cpfCnpj;
+        this.email = email;
+        this.telefone = telefone;
     }
     
     public String toString() {
         return "Nome: " + nome +
                "\nEndereço: " + endereco;
-    }
-
-    public String getSenha() {
-        return senha;
     }
 
 	public String getNome() {
@@ -34,10 +33,15 @@ public class Usuario {
 	public String getCpfCnpj() {
 		return cpfCnpj;
 	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
+	
+	public String getEmail() {
+		return email;
 	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
 
 	public void setNome(String nome) {
 		this.nome = nome;
@@ -46,6 +50,7 @@ public class Usuario {
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
 	}
+
 	
 }
 

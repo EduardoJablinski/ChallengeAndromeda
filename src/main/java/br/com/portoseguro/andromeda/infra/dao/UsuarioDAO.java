@@ -16,13 +16,15 @@ public class UsuarioDAO {
 	}
 	
 	public void adicionar(Usuario usuario) {
-		String sqlInsert = "INSERT INTO usuario (cpfCnpj, nome, endereco, senha) VALUES (?, ?, ?, ?)";
+		String sqlInsert = "INSERT INTO TB_ACS_USER (id_user, nome_user, cpf_user, endereco_user, email_user, telefone_user) VALUES (?, ?, ?, ?, ?, ?)";
 		try {
 			PreparedStatement comandoDeInsercao = conexao.prepareStatement(sqlInsert);
-			comandoDeInsercao.setString(1, usuario.getCpfCnpj());
+			comandoDeInsercao.setLong(1, obterProximoIdUsuario());
 			comandoDeInsercao.setString(2, usuario.getNome());
-			comandoDeInsercao.setString(3, usuario.getEndereco());
-			comandoDeInsercao.setString(4, usuario.getSenha());
+			comandoDeInsercao.setString(3, usuario.getCpfCnpj());
+			comandoDeInsercao.setString(4, usuario.getEndereco());
+			comandoDeInsercao.setString(5, usuario.getEmail());
+			comandoDeInsercao.setString(6, usuario.getTelefone());
 			comandoDeInsercao.execute();
 			comandoDeInsercao.close();
 		} catch(SQLException e) {
@@ -30,27 +32,57 @@ public class UsuarioDAO {
 		}
 	}
 	
-	public boolean realizarLogin(String nomeLogin, String senhaLogin) {
-		try {
-			String sqlSelect = "SELECT * FROM usuario WHERE cpfCnpj = '" + nomeLogin + "' and senha = '" + senhaLogin + "';";
-			PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
-			ResultSet rs = comandoDeSelecao.executeQuery();
-			
-				if(rs.first())
-				{
-					System.out.println("\nLogin bem-sucedido! Bem-vindo, " + nomeLogin + "!");
-					return true;
-			}
-				else
-				{
-					System.out.println("\nDados incorretos. Tente novamente.\n");
-					return false;
-			
-		}}catch(SQLException e) {
-			throw new RuntimeException(e);
-		}	
+	public boolean realizarLogin(String nomeLogin) {
+	    try {
+	        String sqlSelect = "SELECT * FROM TB_ACS_USER WHERE cpf_user = ?";
+	        PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
+	        comandoDeSelecao.setString(1, nomeLogin); // Use PreparedStatement para evitar SQL Injection
+	        ResultSet rs = comandoDeSelecao.executeQuery();
+
+	        if (rs.next()) {
+	            System.out.println("\nLogin bem-sucedido! Bem-vindo! CPF/CNPJ: " + nomeLogin + ".");
+	            return true;
+	        } else {
+	            System.out.println("\nDados incorretos. Tente novamente.\n");
+	            return false;
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException(e);
+	    }
 	}
+
+
 	
+	private Long obterProximoIdUsuario() {
+		Long id = null;
+		try {
+			String sql = "SELECT SEQ_USERS_ID.NEXTVAL FROM DUAL";
+			PreparedStatement comandoDeGeracao =
+			conexao.prepareStatement(sql);
+			ResultSet rs = comandoDeGeracao.executeQuery();
+			while(rs.next()) {
+				id = rs.getLong(1);
+			}
+			rs.close();
+		}catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return id;
+	}
+
+	
+	public void close() {
+		try {
+			if (conexao != null && !conexao.isClosed()) {
+				conexao.close();
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
+
+	
+
 
 

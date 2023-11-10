@@ -8,20 +8,19 @@ import java.util.List;
 	
 	    private static List<Veiculo> veiculoCadastrado = new ArrayList<>();
 	
-	    private int numeroApolice;
-	    private int tipoVeiculo;
+	    private long numeroApolice;
+	    private String condicaoVeiculo;
 	    private String modeloVeiculo;
-	    private String anoVeiculo;
+	    private int anoVeiculo;
 	    private int pesoVeiculo;
 	    private String corVeiculo;
 	    private String combustivelVeiculo;
 	    private String usuario;
 	    private String placaVeiculo;
 	    
-	    public Veiculo(int numeroApolice, int tipoVeiculo, String modeloVeiculo, String anoVeiculo, int pesoVeiculo, String corVeiculo, String combustivelVeiculo, String usuario, String placaVeiculo) {
+	    public Veiculo(long numeroApolice, String condicaoVeiculo, int anoVeiculo, int pesoVeiculo, String corVeiculo, String combustivelVeiculo, String usuario, String placaVeiculo) {
 	    	this.numeroApolice = numeroApolice;
-	    	this.tipoVeiculo = tipoVeiculo;
-	        this.modeloVeiculo = modeloVeiculo;
+	    	this.condicaoVeiculo = condicaoVeiculo;
 	        this.anoVeiculo = anoVeiculo;
 	        this.pesoVeiculo = pesoVeiculo;
 	        this.corVeiculo = corVeiculo;
@@ -60,15 +59,8 @@ import java.util.List;
 			this.modeloVeiculo = modeloVeiculo;
 		}
 	    
-	    public int getTipoVeiculo() {
-	        return tipoVeiculo;
-	    }
 	    
-		public void setTipoVeiculo(int tipoVeiculo) {
-			this.tipoVeiculo = tipoVeiculo;
-		}
-	    
-	    public int getNumeroApolice() {
+	    public long getNumeroApolice() {
 	        return numeroApolice;
 	    }
 
@@ -76,11 +68,11 @@ import java.util.List;
 			this.numeroApolice = numeroApolice;
 		}
 	    
-	    public String getAnoVeiculo() {
+	    public int getAnoVeiculo() {
 	        return anoVeiculo;
 	    }
 
-		public void setAnoVeiculo(String anoVeiculo) {
+		public void setAnoVeiculo(int anoVeiculo) {
 			this.anoVeiculo = anoVeiculo;
 		}
 	    
