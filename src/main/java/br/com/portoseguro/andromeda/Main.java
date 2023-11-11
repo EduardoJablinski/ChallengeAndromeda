@@ -184,13 +184,14 @@ public class Main {
 	                        System.out.println("Qual o tipo de Combustível do Veiculo?");
 	                        String combustivelVeiculo = scanner.nextLine();
 
-	                        VeiculoDAO  veiculoDao = new VeiculoDAO();
+	                        VeiculoDAO veiculoDao = new VeiculoDAO();
 	                        Long numeroApolice = VeiculoDAO.obterProximoNumeroApolice();
 	                        System.out.println("Número da Apólice: " + numeroApolice);
+	                        veiculo.setNumeroApolice(numeroApolice);  // Adiciona o número da apólice ao veículo
 	                        veiculo = new Veiculo(numeroApolice, condicaoVeiculo, anoVeiculo, pesoVeiculo, corVeiculo, combustivelVeiculo, usuarioLogado, placaVeiculo);
 
-	                        veiculoDao.adicionar(veiculo);
-
+	                        veiculoDao.adicionar(veiculo, usuarioLogado);  // Adiciona o segundo parâmetro (usuarioLogado)
+	                        
 	                        boolean opcaoValida = false;
 	                        while (!opcaoValida) {
 	                            System.out.println("\nDeseja cadastrar outro veículo?");

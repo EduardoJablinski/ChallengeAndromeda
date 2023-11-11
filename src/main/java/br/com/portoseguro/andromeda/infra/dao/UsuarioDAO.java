@@ -80,6 +80,23 @@ public class UsuarioDAO {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public Long obterIdUsuarioPorLogin(String nomeLogin) {
+	    try {
+	        String sqlSelectId = "SELECT id_user FROM TB_ACS_USER WHERE cpf_user = ?";
+	        PreparedStatement comandoDeSelecaoId = conexao.prepareStatement(sqlSelectId);
+	        comandoDeSelecaoId.setString(1, nomeLogin);
+	        ResultSet rs = comandoDeSelecaoId.executeQuery();
+
+	        if (rs.next()) {
+	            return rs.getLong("id_user");
+	        } else {
+	            return null;	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException(e);
+	    }
+	}
+
 }
 
 	

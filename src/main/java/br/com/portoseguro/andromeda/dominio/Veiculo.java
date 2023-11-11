@@ -42,6 +42,11 @@ import java.util.List;
 
 	    }
 	    
+	    public String getCondicaoVeiculo() {
+	        return condicaoVeiculo;
+
+	    }
+	    
 	    public String getPlacaVeiculo() {
 	        return placaVeiculo;
 
@@ -64,7 +69,7 @@ import java.util.List;
 	        return numeroApolice;
 	    }
 
-		public void setNumeroApolice(int numeroApolice) {
+		public void setNumeroApolice(Long numeroApolice) {
 			this.numeroApolice = numeroApolice;
 		}
 	    

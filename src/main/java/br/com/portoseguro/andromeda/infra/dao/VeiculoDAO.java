@@ -10,32 +10,85 @@ import br.com.portoseguro.andromeda.dominio.Veiculo;
 
 public class VeiculoDAO {
 
-	private Connection conexao;
+	private static Connection conexao;
 	
 	public VeiculoDAO() {
 		conexao = new ConnectionFactory().getConnection();
 	}
 	
-	public void adicionar(Veiculo veiculo) {
-		String sqlInsert = "INSERT INTO veiculo (cpfCnpj, numeroApolice, tipoVeiculo, modeloVeiculo, anoVeiculo, pesoVeiculo, corVeiculo, combustivelVeiculo, placaVeiculo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		try {
+	
+	public void adicionar(Veiculo veiculo, String usuarioLogado) {
+	    String sqlInsertVeiculo = "INSERT INTO TB_ACS_VEICULO (id_veiculo, ano_veiculo, peso_veiculo, tipo_combustivel, cor_veiculo) VALUES (?, ?, ?, ?, ?)";
+	    String sqlInsertVeiculoApolice = "INSERT INTO TB_ACS_VEICULO_APOLICE (id_veiculoap, placa_veiculo, condicao_veiculo, tb_acs_veiculo_id_veiculo, tb_acs_apolice_id_apolice) VALUES (?, ?, ?, ?, ?)";
+	    String sqlInsertApolice = "INSERT INTO TB_ACS_APOLICE (id_apolice, numero_apolice, tb_acs_user_id_user, tb_acs_modeloap_id_modeloap) VALUES (?, ?, ?, ?)";
+
+	    try {
+	        // Obtém uma instância do UsuarioDAO
+	        UsuarioDAO usuarioDao = new UsuarioDAO();
+	        long idVeiculo = obterProximoIdVeiculo();
+	        long idApolice = obterProximoIdApolice();
+
+
 	        conexao.setAutoCommit(false);
-			PreparedStatement comandoDeInsercao = conexao.prepareStatement(sqlInsert);
-			comandoDeInsercao.setString(1, veiculo.getUsuario());
-			comandoDeInsercao.setInt(2, veiculo.getNumeroApolice());
-			comandoDeInsercao.setInt(3, veiculo.getTipoVeiculo());
-			comandoDeInsercao.setString(4, veiculo.getModeloVeiculo());
-			comandoDeInsercao.setString(5, veiculo.getAnoVeiculo());
-			comandoDeInsercao.setInt(6, veiculo.getPesoVeiculo());
-			comandoDeInsercao.setString(7, veiculo.getCorVeiculo());
-			comandoDeInsercao.setString(8, veiculo.getCombustivelVeiculo());
-			comandoDeInsercao.setString(9, veiculo.getPlacaVeiculo());
-			comandoDeInsercao.execute();
-			comandoDeInsercao.close();
-		} catch(SQLException e) {
-			throw new RuntimeException(e);
-		}
+
+	        // Inserir na tabela TB_ACS_VEICULO
+	        try (PreparedStatement comandoDeInsercaoVeiculo = conexao.prepareStatement(sqlInsertVeiculo)) {
+	            comandoDeInsercaoVeiculo.setLong(1, idVeiculo);
+	            comandoDeInsercaoVeiculo.setInt(2, veiculo.getAnoVeiculo());
+	            comandoDeInsercaoVeiculo.setInt(3, veiculo.getPesoVeiculo());
+	            comandoDeInsercaoVeiculo.setString(4, veiculo.getCombustivelVeiculo());
+	            comandoDeInsercaoVeiculo.setString(5, veiculo.getCorVeiculo());
+	            comandoDeInsercaoVeiculo.execute();
+	        }
+
+	        // Inserir na tabela TB_ACS_APOLICE
+	        try (PreparedStatement comandoDeInsercaoApolice = conexao.prepareStatement(sqlInsertApolice)) {
+	            comandoDeInsercaoApolice.setLong(1, idApolice);
+	            comandoDeInsercaoApolice.setLong(2, veiculo.getNumeroApolice());
+
+	            // Obtém o ID do usuário associado ao login
+	            Long idUsuario = usuarioDao.obterIdUsuarioPorLogin(usuarioLogado);
+	            if (idUsuario != null) {
+	                comandoDeInsercaoApolice.setLong(3, idUsuario);
+	            } else {
+	                throw new RuntimeException("ID do usuário não encontrado para o login: " + usuarioLogado);
+	            }
+
+	            // Modifique conforme a lógica do seu sistema
+	            comandoDeInsercaoApolice.setLong(4, 1);
+
+	            comandoDeInsercaoApolice.execute();
+	        }
+
+	        // Inserir na tabela TB_ACS_VEICULO_APOLICE
+	        try (PreparedStatement comandoDeInsercaoVeiculoApolice = conexao.prepareStatement(sqlInsertVeiculoApolice)) {
+	            comandoDeInsercaoVeiculoApolice.setLong(1, obterProximoIdVeiculoApolice());
+	            comandoDeInsercaoVeiculoApolice.setString(2, veiculo.getPlacaVeiculo());
+	            comandoDeInsercaoVeiculoApolice.setString(3, veiculo.getCondicaoVeiculo());
+	            comandoDeInsercaoVeiculoApolice.setLong(4, idVeiculo);
+	            comandoDeInsercaoVeiculoApolice.setLong(5, idApolice);
+	            comandoDeInsercaoVeiculoApolice.execute();
+	        }
+
+	        conexao.commit();
+
+	    } catch (SQLException e) {
+	        try {
+	            conexao.rollback();
+	        } catch (SQLException rollbackException) {
+	            rollbackException.printStackTrace();
+	        }
+	        throw new RuntimeException(e);
+	    } finally {
+	        try {
+	            conexao.setAutoCommit(true);
+	        } catch (SQLException autoCommitException) {
+	            autoCommitException.printStackTrace();
+	        }
+	    }
 	}
+
+
 	
 	public ArrayList<Veiculo> listarTodos(String nomeLogin) {
 		ArrayList<Veiculo> veiculos = new ArrayList<>();
@@ -101,4 +154,55 @@ public class VeiculoDAO {
 		return id_apolice;
 	}
 
+	
+	private Long obterProximoIdVeiculo() {
+		Long idVeiculo = null;
+		try {
+			String sql = "SELECT SEQ_VEICULO_ID.NEXTVAL FROM DUAL";
+			PreparedStatement comandoDeGeracao =
+			conexao.prepareStatement(sql);
+			ResultSet rs = comandoDeGeracao.executeQuery();
+			while(rs.next()) {
+				idVeiculo = rs.getLong(1);
+			}
+			rs.close();
+		}catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return idVeiculo;
+	}
+	
+	private Long obterProximoIdApolice() {
+		Long idApolice = null;
+		try {
+			String sql = "SELECT SEQ_APOLICE_ID.NEXTVAL FROM DUAL";
+			PreparedStatement comandoDeGeracao =
+			conexao.prepareStatement(sql);
+			ResultSet rs = comandoDeGeracao.executeQuery();
+			while(rs.next()) {
+				idApolice = rs.getLong(1);
+			}
+			rs.close();
+		}catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return idApolice;
+	}
+	
+	private Long obterProximoIdVeiculoApolice() {
+		Long idApolice = null;
+		try {
+			String sql = "SELECT SEQ_VEICULOAPOLICE_ID.NEXTVAL FROM DUAL";
+			PreparedStatement comandoDeGeracao =
+			conexao.prepareStatement(sql);
+			ResultSet rs = comandoDeGeracao.executeQuery();
+			while(rs.next()) {
+				idApolice = rs.getLong(1);
+			}
+			rs.close();
+		}catch(SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return idApolice;
+	}
 }
