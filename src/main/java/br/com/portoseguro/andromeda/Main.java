@@ -14,7 +14,6 @@ public class Main {
 
 	public static void main(String[] args) {
 		Scanner scanner = new Scanner(System.in);
-		Random random = new Random();
 	
 		System.out.println("----------------------------------------------------------------------");
 		System.out.println("Bem vindo ao Sistema Andrômeda, o serviço de suporte virtual da Porto!");
@@ -36,7 +35,7 @@ public class Main {
 	            switch (resposta) {
 		            case 1:
 		            	System.out.println("\nOlá, aqui você pode adicionar uma nova conta!");
-						String senhaPf = null, nomePf = null, enderecoPf = null, cpfCnpj = null, emailPf = null, telefonePf = null;
+						String nomePf = null, enderecoPf = null, cpfCnpj = null, emailPf = null, telefonePf = null;
 						System.out.println("Digite o seu CPF ou CNPJ (Apenas Números):");
 						cpfCnpj = scanner.nextLine();
 						System.out.println("Digite o seu primeiro e último nome:");
@@ -223,11 +222,7 @@ public class Main {
 		                        System.out.println("\nVeículos cadastrados no seu nome:");
 		                        for (Veiculo v : veiculosDoUsuario) {
 		                            System.out.println("Número da Apólice: " + v.getNumeroApolice());
-		                            System.out.println("Modelo do Veículo: " + v.getModeloVeiculo());
-		                            System.out.println("Ano: " + v.getAnoVeiculo());
-		                            System.out.println("Cor: " + v.getCorVeiculo());
-		                            System.out.println("Combustível: " + v.getCombustivelVeiculo());
-		                            System.out.println("Peso: " + v.getPesoVeiculo());
+		                            System.out.println("Placa do Veículo: " + v.getPlacaVeiculo());
 		                            System.out.println("----------------------------");
 		                        }
 		                    }

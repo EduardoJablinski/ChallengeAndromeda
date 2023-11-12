@@ -31,38 +31,14 @@ public class Modal {
         conexao = new ConnectionFactory().getConnection();
 	}
 	
-	
-	
-	public String getTipoModal(int numeroApolice) {
-	    try {
-	        String sqlSelect = "SELECT tipoVeiculo FROM veiculo WHERE numeroApolice = '" + numeroApolice + "';";
-	        PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
-	        ResultSet rs = comandoDeSelecao.executeQuery();
 
-	        if (rs.first()) {
-	            String tipoVeiculo = rs.getString("tipoVeiculo");
-	            return tipoVeiculo;
-	        } else {
-	            System.out.println("\nDados incorretos. Tente novamente.\n");
-	            return null;
-	        }
-	    } catch (SQLException e) {
-	        throw new RuntimeException(e);
-	    }
-	}
 
 	public void tipoGuincho(Modal modal) {
-		String tipoModal = modal.getTipoModal(numeroApolice);
-	    String tipoGuincho;
 	    String tipoAcesso;
 	    String tipoCarga;
 	    String ocorrenciaVeiculo;
 
-	    if ("1".equals(tipoModal) || "2".equals(tipoModal)) {
-	        tipoGuincho = "Guincho Leve";
-	    } else {
-	        tipoGuincho = "Guinho Pesado";
-	    }
+
 	    
 	    if (acessoVeiculo == 1) {
 	        tipoAcesso = "Sim";
@@ -71,9 +47,9 @@ public class Modal {
 	    }
 	    
 	    if (cargaVeiculo == 1) {
-	    	tipoCarga = ", veículo com carga pesada";
+	    	tipoCarga = "Veículo com carga pesada";
 	    } else {
-	    	tipoCarga = ", veículo sem carga pesada";
+	    	tipoCarga = "Veículo sem carga pesada";
 	    }
 	    
 	    if (tipoOcorrencia == 1) {
@@ -84,7 +60,7 @@ public class Modal {
 	    
 	    System.out.println(
 	    	    "Tipo de Ocorrência: " + ocorrenciaVeiculo + "\n" +
-	    	    "Tipo de Guincho: " + tipoGuincho + tipoCarga + "\n" +
+	    	    "Tipo de Carga: " + tipoCarga + "\n" +
 	    	    "Endereço da Ocorrência: " + enderecoOcorrencia + "\n" +
 	    	    "Local de Difícil Acesso?: " + tipoAcesso + "\n" +
 	    	    "Telefone de Contato: " + telefoneContato + "\n" +

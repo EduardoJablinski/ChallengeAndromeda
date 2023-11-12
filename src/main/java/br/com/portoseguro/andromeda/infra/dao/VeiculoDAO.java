@@ -23,7 +23,6 @@ public class VeiculoDAO {
 	    String sqlInsertApolice = "INSERT INTO TB_ACS_APOLICE (id_apolice, numero_apolice, tb_acs_user_id_user, tb_acs_modeloap_id_modeloap) VALUES (?, ?, ?, ?)";
 
 	    try {
-	        // Obtém uma instância do UsuarioDAO
 	        UsuarioDAO usuarioDao = new UsuarioDAO();
 	        long idVeiculo = obterProximoIdVeiculo();
 	        long idApolice = obterProximoIdApolice();
@@ -31,7 +30,6 @@ public class VeiculoDAO {
 
 	        conexao.setAutoCommit(false);
 
-	        // Inserir na tabela TB_ACS_VEICULO
 	        try (PreparedStatement comandoDeInsercaoVeiculo = conexao.prepareStatement(sqlInsertVeiculo)) {
 	            comandoDeInsercaoVeiculo.setLong(1, idVeiculo);
 	            comandoDeInsercaoVeiculo.setInt(2, veiculo.getAnoVeiculo());
@@ -41,12 +39,10 @@ public class VeiculoDAO {
 	            comandoDeInsercaoVeiculo.execute();
 	        }
 
-	        // Inserir na tabela TB_ACS_APOLICE
 	        try (PreparedStatement comandoDeInsercaoApolice = conexao.prepareStatement(sqlInsertApolice)) {
 	            comandoDeInsercaoApolice.setLong(1, idApolice);
 	            comandoDeInsercaoApolice.setLong(2, veiculo.getNumeroApolice());
 
-	            // Obtém o ID do usuário associado ao login
 	            Long idUsuario = usuarioDao.obterIdUsuarioPorLogin(usuarioLogado);
 	            if (idUsuario != null) {
 	                comandoDeInsercaoApolice.setLong(3, idUsuario);
@@ -54,13 +50,11 @@ public class VeiculoDAO {
 	                throw new RuntimeException("ID do usuário não encontrado para o login: " + usuarioLogado);
 	            }
 
-	            // Modifique conforme a lógica do seu sistema
 	            comandoDeInsercaoApolice.setLong(4, 1);
 
 	            comandoDeInsercaoApolice.execute();
 	        }
 
-	        // Inserir na tabela TB_ACS_VEICULO_APOLICE
 	        try (PreparedStatement comandoDeInsercaoVeiculoApolice = conexao.prepareStatement(sqlInsertVeiculoApolice)) {
 	            comandoDeInsercaoVeiculoApolice.setLong(1, obterProximoIdVeiculoApolice());
 	            comandoDeInsercaoVeiculoApolice.setString(2, veiculo.getPlacaVeiculo());
@@ -91,51 +85,52 @@ public class VeiculoDAO {
 
 	
 	public ArrayList<Veiculo> listarTodos(String nomeLogin) {
-		ArrayList<Veiculo> veiculos = new ArrayList<>();
-		try {
-			String sqlSelect = "SELECT * FROM veiculo WHERE cpfCnpj = '" + nomeLogin + "'";
-			PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
-			ResultSet rs = comandoDeSelecao.executeQuery();
-			while(rs.next()) {
-				Veiculo veiculo = new Veiculo();
-				veiculo.setNumeroApolice(rs.getInt("numeroApolice"));
-				veiculo.setModeloVeiculo(rs.getString("modeloVeiculo"));
-				veiculo.setAnoVeiculo(rs.getString("anoVeiculo"));
-				veiculo.setPesoVeiculo(rs.getInt("pesoVeiculo"));
-				veiculo.setCorVeiculo(rs.getString("corVeiculo"));
-				veiculo.setCombustivelVeiculo(rs.getString("combustivelVeiculo"));
-				veiculo.setPlacaVeiculo(rs.getString("placaVeiculo"));
-				veiculos.add(veiculo);
-			}
-			
-		}catch(SQLException e) {
-			throw new RuntimeException(e);
-		}	
-		return veiculos;
+	    ArrayList<Veiculo> veiculos = new ArrayList<>();
+	    try {
+	        String sqlSelect = "SELECT A.NUMERO_APOLICE, VA.PLACA_VEICULO FROM TB_ACS_APOLICE A " +
+	                            "JOIN TB_ACS_USER U ON A.TB_ACS_USER_ID_USER = U.ID_USER " +
+	                            "JOIN TB_ACS_VEICULO_APOLICE VA ON A.ID_APOLICE = VA.TB_ACS_APOLICE_ID_APOLICE " +
+	                            "WHERE U.CPF_USER = ?";
+	        PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
+	        comandoDeSelecao.setString(1, nomeLogin);
+	        ResultSet rs = comandoDeSelecao.executeQuery();
+	        while (rs.next()) {
+	            Veiculo veiculo = new Veiculo();
+	            veiculo.setNumeroApolice(rs.getLong("NUMERO_APOLICE"));
+	            veiculo.setPlacaVeiculo(rs.getString("PLACA_VEICULO"));
+	            veiculos.add(veiculo);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return veiculos;
 	}
+
+
 	
 	public boolean realizarLoginGuincho(String nomeLogin, int numeroApolice) {
-		try {
-			String sqlSelect = "SELECT * FROM veiculo WHERE cpfCnpj = '" + nomeLogin + "' and numeroApolice = '" + numeroApolice + "';";
-			PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
-			ResultSet rs = comandoDeSelecao.executeQuery();
-			
-				if(rs.first())
-				{
-					System.out.println("\nDados encontrados! Bem-vindo!");
-					return true;
-			}
-				else
-				{
-					System.out.println("\nDados não encontrados no sistema. Tente novamente.\n");
-					return false;
-			
-		}}catch(SQLException e) {
-			throw new RuntimeException(e);
-			
-			
-		}	
+	    try {
+	        String sqlSelect = "SELECT A.NUMERO_APOLICE, VA.PLACA_VEICULO FROM TB_ACS_APOLICE A " +
+	                "JOIN TB_ACS_USER U ON A.TB_ACS_USER_ID_USER = U.ID_USER " +
+	                "JOIN TB_ACS_VEICULO_APOLICE VA ON A.ID_APOLICE = VA.TB_ACS_APOLICE_ID_APOLICE " +
+	                "WHERE U.CPF_USER = ? AND A.NUMERO_APOLICE = ?";
+	        PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+	        comandoDeSelecao.setString(1, nomeLogin);
+	        comandoDeSelecao.setString(2, String.valueOf(numeroApolice));
+	        ResultSet rs = comandoDeSelecao.executeQuery();
+
+	        if (rs.next()) {
+	            System.out.println("\nDados encontrados! Bem-vindo!");
+	            return true;
+	        } else {
+	            System.out.println("\nDados não encontrados no sistema. Tente novamente.\n");
+	            return false;
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException(e);
+	    }
 	}
+
 	
 	public static Long obterProximoNumeroApolice() {
 		Long id_apolice = null;
