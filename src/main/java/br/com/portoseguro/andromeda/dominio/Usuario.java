@@ -1,5 +1,7 @@
 package br.com.portoseguro.andromeda.dominio;
 
+import br.com.portoseguro.andromeda.dominio.Endereco;
+
 public class Usuario {
 	
 	private Long id;
@@ -8,6 +10,7 @@ public class Usuario {
     private String cpfCnpj;
     private String email;
     private String telefone;
+	private Endereco enderecoCep;
 
 
     public Usuario(String nome, String endereco, String cpfCnpj, String email, String telefone) {
@@ -55,7 +58,20 @@ public class Usuario {
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
 	}
-
 	
+	public void atualizarEndereco(Endereco enderecoCep) {
+		this.enderecoCep = enderecoCep;
+	}
+
+	public String getCep() {
+	    if (enderecoCep != null) {
+	        return enderecoCep.getCep();
+	    } else {
+	        return null; 
+	}
+
+
+
+	}
 }
 

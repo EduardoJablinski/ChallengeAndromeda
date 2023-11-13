@@ -1,4 +1,4 @@
-package br.com.portoseguro.config;
+package br.com.portoseguro.andromeda.config;
 
 import org.glassfish.jersey.server.ResourceConfig;
 

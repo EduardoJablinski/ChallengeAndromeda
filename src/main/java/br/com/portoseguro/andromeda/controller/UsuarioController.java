@@ -1,4 +1,4 @@
-package br.com.portoseguro.controller;
+package br.com.portoseguro.andromeda.controller;
 
 import br.com.portoseguro.andromeda.dominio.Veiculo;
 import br.com.portoseguro.andromeda.infra.dao.UsuarioDAO;
