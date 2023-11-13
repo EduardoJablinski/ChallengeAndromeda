@@ -6,13 +6,23 @@ import br.com.portoseguro.andromeda.dominio.Usuario;
 import br.com.portoseguro.andromeda.dominio.Veiculo;
 import br.com.portoseguro.andromeda.infra.dao.UsuarioDAO;
 import br.com.portoseguro.andromeda.infra.dao.VeiculoDAO;
-
 import java.util.ArrayList;
-import java.util.Random;
+
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
+import java.io.IOException;
+import java.net.URI;
+
 
 public class Main {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+        try {
+
+        
+    	startJerseyServer();
+
 		Scanner scanner = new Scanner(System.in);
 	
 		System.out.println("----------------------------------------------------------------------");
@@ -214,7 +224,10 @@ public class Main {
 		                    
 		                case 2:
 		                    VeiculoDAO veiculoDAO = new VeiculoDAO();
-		                    ArrayList<Veiculo> veiculosDoUsuario = veiculoDAO.listarTodos(usuarioLogado);
+		                    UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+		                    Long idUsuario = usuarioDAO.obterIdUsuarioPorLogin(usuarioLogado);
+		                    ArrayList<Veiculo> veiculosDoUsuario = veiculoDAO.listarTodos(idUsuario);
 
 		                    if (veiculosDoUsuario.isEmpty()) {
 		                        System.out.println("\nVocê não possui veículos cadastrados.\n");
@@ -244,4 +257,26 @@ public class Main {
 	                        break;            
 }}}
         scanner.close();
-}}
+
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+private static void startJerseyServer() throws IOException {
+    final ResourceConfig rc = new ResourceConfig().packages("br.com.portoseguro.controller");
+
+    final String baseUri = "http://localhost:8080/";
+
+    final HttpServer server = GrizzlyHttpServerFactory.createHttpServer(URI.create(baseUri), rc);
+
+    server.start();
+
+    System.out.println(String.format("Jersey app started with endpoints available at %s", baseUri));
+    System.out.println("Hit Ctrl-C to stop it...");
+
+    System.in.read();
+
+    server.shutdownNow();
+}
+}

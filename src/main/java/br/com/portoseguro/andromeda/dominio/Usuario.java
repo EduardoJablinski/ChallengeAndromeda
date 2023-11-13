@@ -2,6 +2,7 @@ package br.com.portoseguro.andromeda.dominio;
 
 public class Usuario {
 	
+	private Long id;
     private String nome;
     private String endereco;
     private String cpfCnpj;
@@ -15,6 +16,10 @@ public class Usuario {
         this.cpfCnpj = cpfCnpj;
         this.email = email;
         this.telefone = telefone;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
     }
     
     public String toString() {

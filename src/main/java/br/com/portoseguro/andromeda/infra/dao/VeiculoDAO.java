@@ -84,15 +84,15 @@ public class VeiculoDAO {
 
 
 	
-	public ArrayList<Veiculo> listarTodos(String nomeLogin) {
+	public ArrayList<Veiculo> listarTodos(Long idUsuario) {
 	    ArrayList<Veiculo> veiculos = new ArrayList<>();
 	    try {
 	        String sqlSelect = "SELECT A.NUMERO_APOLICE, VA.PLACA_VEICULO FROM TB_ACS_APOLICE A " +
 	                            "JOIN TB_ACS_USER U ON A.TB_ACS_USER_ID_USER = U.ID_USER " +
 	                            "JOIN TB_ACS_VEICULO_APOLICE VA ON A.ID_APOLICE = VA.TB_ACS_APOLICE_ID_APOLICE " +
-	                            "WHERE U.CPF_USER = ?";
+	                            "WHERE U.ID_USER = ?";
 	        PreparedStatement comandoDeSelecao = conexao.prepareStatement(sqlSelect);
-	        comandoDeSelecao.setString(1, nomeLogin);
+	        comandoDeSelecao.setLong(1, idUsuario);
 	        ResultSet rs = comandoDeSelecao.executeQuery();
 	        while (rs.next()) {
 	            Veiculo veiculo = new Veiculo();
