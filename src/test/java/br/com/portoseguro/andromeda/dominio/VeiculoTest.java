@@ -15,7 +15,7 @@ public class VeiculoTest {
 
     @Test
     public void testCadastrarVeiculo() {
-        Veiculo novoVeiculo = new Veiculo(123, 1, "Modelo", "2022", 1500, "Preto", "Gasolina", "Usuario", "ABC123");
+        Veiculo novoVeiculo = new Veiculo(123, "Excelente", 2022, 1500, "Preto", "Gasolina", "Usuario", "ABC123");
 
         veiculo.cadastrarVeiculo(novoVeiculo, "Usuario");
 
@@ -24,8 +24,8 @@ public class VeiculoTest {
 
     @Test
     public void testExibirVeiculosDoUsuario() {
-        Veiculo veiculo1 = new Veiculo(123, 1, "Modelo1", "2022", 1500, "Preto", "Gasolina", "Usuario1", "ABC123");
-        Veiculo veiculo2 = new Veiculo(456, 2, "Modelo2", "2023", 1600, "Branco", "Diesel", "Usuario2", "XYZ789");
+        Veiculo veiculo1 = new Veiculo(123, "Excelente", 2022, 1500, "Preto", "Gasolina", "Usuario1", "ABC123");
+        Veiculo veiculo2 = new Veiculo(456, "Bom", 2023, 1600, "Branco", "Diesel", "Usuario2", "XYZ789");
 
         veiculo.cadastrarVeiculo(veiculo1, "Usuario1");
         veiculo.cadastrarVeiculo(veiculo2, "Usuario2");

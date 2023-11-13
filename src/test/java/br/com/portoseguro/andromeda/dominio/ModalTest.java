@@ -31,7 +31,7 @@ public class ModalTest {
         String output = outContent.toString().trim();
 
         String expectedOutput = "Tipo de Ocorrência: Acidente de Trânsito\n" +
-                "Tipo de Guincho: Guincho Leve, veículo com carga pesada\n" +
+                "Tipo de Carga: Veículo com carga pesada\n" +
                 "Endereço da Ocorrência: Endereco\n" +
                 "Local de Difícil Acesso?: Sim\n" +
                 "Telefone de Contato: 123\n" +

@@ -1,6 +1,5 @@
 package br.com.portoseguro.controller;
 
-import br.com.portoseguro.andromeda.dominio.Usuario;
 import br.com.portoseguro.andromeda.dominio.Veiculo;
 import br.com.portoseguro.andromeda.infra.dao.UsuarioDAO;
 import br.com.portoseguro.andromeda.infra.dao.VeiculoDAO;
@@ -71,14 +70,4 @@ public class UsuarioController {
         }
     }
 
-
-
-
-    
-    @POST
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response cadastrarUsuario(Usuario usuario) {
-        usuarioDAO.adicionar(usuario);
-        return Response.status(Response.Status.CREATED).build();
-    }
 }
